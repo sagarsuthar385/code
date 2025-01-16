@@ -1,0 +1,30 @@
+<!-- chat.html -->
+<h1>Chat with {{ chat_user.username }}</h1>
+<div id="chat-box">
+    {% for msg in messages %}
+        <div>{{ msg.from_user.username }}: {{ msg.content }}</div>
+    {% endfor %}
+</div>
+
+<form id="message-form">
+    <input type="text" id="message" placeholder="Type a message..." required>
+    <button type="submit">Send</button>
+</form>
+
+<script>
+    const socket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML += `<div>${data.from_user}: ${data.message}</div>`;
+    };
+
+    document.getElementById('message-form').onsubmit = function(event) {
+        event.preventDefault();
+        const message = document.getElementById('message').value;
+        const toUserId = {{ chat_user.id }};
+        socket.send(JSON.stringify({ 'message': message, 'to_user_id': toUserId }));
+        document.getElementById('message').value = '';
+    };
+</script>

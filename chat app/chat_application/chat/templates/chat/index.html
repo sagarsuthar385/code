@@ -1,0 +1,8 @@
+<!-- index.html -->
+<h1>Welcome, {{ user.username }}</h1>
+<h2>Users</h2>
+<ul>
+    {% for u in users %}
+        <li><a href="{% url 'chat' user_id=u.id %}">{{ u.username }}</a></li>
+    {% endfor %}
+</ul>
